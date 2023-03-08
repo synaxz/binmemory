@@ -37,5 +37,8 @@ func main() {
 			log.Fatal("Error while reading req: ", err.Error())
 			os.Exit(1)
 		}
+
+		wr := NewRespWriter(conn)
+		wr.Write("PONG")
 	}
 }
