@@ -20,8 +20,8 @@ func TestWrite(t *testing.T) {
 		testName := fmt.Sprintf("Testing input %s", tt.input)
 		t.Run(testName, func(t *testing.T) {
 			var buffer bytes.Buffer
-			rw := NewRespWriter(&buffer)
-			err := rw.Write(tt.input)
+			rw := NewRespWriter()
+			err := rw.Write(&buffer, tt.input)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -47,8 +47,8 @@ func TestWriteError(t *testing.T) {
 
 		t.Run(testName, func(t *testing.T) {
 			var buffer bytes.Buffer
-			rw := NewRespWriter(&buffer)
-			err := rw.WriteError(tt.input)
+			rw := NewRespWriter()
+			err := rw.WriteError(&buffer, tt.input)
 			if err != nil {
 				t.Fatal(err)
 			}

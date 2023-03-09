@@ -14,36 +14,35 @@ var (
 	linEndByte = []byte{'\r', '\n'}
 )
 
-type RespWriter struct {
-	*bufio.Writer
+type RespWriter struct{}
+
+func NewRespWriter() *RespWriter {
+	return &RespWriter{}
 }
 
-func NewRespWriter(w io.Writer) *RespWriter {
-	return &RespWriter{
-		Writer: bufio.NewWriter(w),
-	}
-}
-
-func (rw *RespWriter) Write(strs ...string) error {
+func (rw *RespWriter) Write(w io.Writer, strs ...string) error {
+	bw := bufio.NewWriter(w)
 
 	for _, str := range strs {
-		rw.Writer.Write(bulkStringByte)
-		rw.Writer.WriteString(strconv.Itoa(len(str)))
-		rw.Writer.Write(linEndByte)
-		rw.Writer.WriteString(str)
-		rw.Writer.Write(linEndByte)
+		bw.Write(bulkStringByte)
+		bw.WriteString(strconv.Itoa(len(str)))
+		bw.Write(linEndByte)
+		bw.WriteString(str)
+		bw.Write(linEndByte)
 	}
 
-	return rw.Writer.Flush()
+	return bw.Flush()
 }
 
-func (rw *RespWriter) WriteError(errStr string) error {
+func (rw *RespWriter) WriteError(w io.Writer, errStr string) error {
 
-	rw.Writer.Write(errorByte)
+	bw := bufio.NewWriter(w)
 
-	rw.Writer.Write([]byte(errStr))
+	bw.Write(errorByte)
 
-	rw.Writer.Write(linEndByte)
+	bw.WriteString(errStr)
 
-	return rw.Writer.Flush()
+	bw.Write(linEndByte)
+
+	return bw.Flush()
 }
